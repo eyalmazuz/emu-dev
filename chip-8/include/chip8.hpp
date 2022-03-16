@@ -12,6 +12,7 @@ class CHIP8 {
 
         uint8_t key[16];
         uint8_t display[64*32];
+        bool draw;
 
     private:
         uint16_t stack[16];

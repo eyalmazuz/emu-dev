@@ -268,6 +268,7 @@ void CHIP8::cycle(){
 
             }
             pc += 2;
+            draw = true;
             break;
         }
 

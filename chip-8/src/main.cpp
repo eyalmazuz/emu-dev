@@ -1,5 +1,25 @@
 #include "../include/chip8.hpp"
 #include <iostream>
+#include <SDL2/SDL.h>
+
+uint8_t keymap[16] = {
+    SDLK_x,
+    SDLK_1,
+    SDLK_2,
+    SDLK_3,
+    SDLK_q,
+    SDLK_w,
+    SDLK_e,
+    SDLK_a,
+    SDLK_s,
+    SDLK_d,
+    SDLK_z,
+    SDLK_c,
+    SDLK_4,
+    SDLK_r,
+    SDLK_f,
+    SDLK_v,
+};
 
 int main(int argc, char **argv){
     
@@ -15,12 +35,67 @@ int main(int argc, char **argv){
         return 1;
     }
 
-    //TODO: init graphics
+    SDL_Renderer *renderer;
+    SDL_Window *window;
 
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+        std::cout << "Couldn't initialize SDL " << SDL_GetError() << std::endl;
+        exit(1);
+    }
+
+    window = SDL_CreateWindow("Chip8", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1024, 512, 0);
+    if (!window){
+        std::cout << "Failed to open window " << SDL_GetError() << std::endl;
+        exit(1);
+    }
+    renderer = SDL_CreateRenderer(window, -1, 0);
+
+    if (!renderer){
+        std::cout << "Failed to create renderer " << SDL_GetError() << std::endl;
+        exit(1);
+    }
+        
     while(true){
         chip8->cycle();
 
-        //TODO: process graphics
+        SDL_Event event;
+
+        while (SDL_PollEvent(&event)) {
+            if(event.type == SDL_QUIT) {
+                exit(0);
+            }
+
+            if(event.type == SDL_KEYDOWN){
+                if(event.key.keysym.sym == SDLK_ESCAPE){
+                    exit(0);
+                }
+                for (int i = 0; i < 16; i++){
+                    if(event.key.keysym.sym == keymap[i]) {
+                        chip8->key[i] = 1;
+                    }
+                }
+            }
+            if(event.type == SDL_KEYUP) {
+               for (int i = 0; i < 16; i++){
+                    if(event.key.keysym.sym == keymap[i]) {
+                        chip8->key[i] = 0;
+                    }
+                } 
+            }
+        }
+        if(chip8->draw) {
+            chip8->draw = false;
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            SDL_RenderClear(renderer);
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+            //TODO: process graphics
+
+            SDL_RenderPresent(renderer);
+            
+        }
+        // Delay the game
+        SDL_Delay(10);
     }
 
     return 0;
