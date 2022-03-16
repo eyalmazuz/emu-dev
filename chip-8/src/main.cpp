@@ -15,5 +15,13 @@ int main(int argc, char **argv){
         return 1;
     }
 
+    //TODO: init graphics
+
+    while(true){
+        chip8->cycle();
+
+        //TODO: process graphics
+    }
+
     return 0;
 }
