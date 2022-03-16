@@ -101,6 +101,9 @@ void CHIP8::cycle(){
                     pc = stack[sp];
                     pc += 2;
                     break;
+
+                default:
+                    break;
             }
             break;
 
@@ -115,151 +118,125 @@ void CHIP8::cycle(){
             break;
 
         case 0x3000:
-            uint8_t val = opcode & 0x00FF;
-            uint8_t x = opcode & 0x0F00;
-            if (V[x] == val){
+            if (V[opcode & 0x0F00] == opcode & 0x00FF){
                 pc += 2;
             } 
             pc += 2;
             break;
 
         case 0x4000:
-            uint8_t val = opcode & 0x00FF;
-            uint8_t x = (opcode & 0x0F00) >> 8;
-            if (V[x] != val){
+            if (V[opcode & 0x0F00] == opcode & 0x00FF){
                 pc += 2;
             } 
             pc += 2;
             break;
 
         case 0x5000:
-            uint8_t x = (opcode & 0x0F00) >> 8;
-            uint8_t y = (opcode & 0x00F0) >> 4;
-            if(V[x] == V[y]){
+            if(V[(opcode & 0x0F00) >> 8] == V[(opcode & 0x00F0) >> 4]){
                 pc += 2;
             }
             pc += 2;
             break;
     
         case 0x6000:
-            uint8_t x = (opcode & 0x0F00) >> 8;
-            uint8_t val = opcode & 0x00FF;
-            V[x] = val;
+            V[(opcode & 0x0F00) >> 8] = opcode & 0x00FF;
             pc += 2;
             break;
         
         case 0x7000:
-            uint8_t x = (opcode & 0x0F00) >> 8;
-            uint8_t val = opcode & 0x00FF;
-            V[x] = V[x] + val;
+            V[(opcode & 0x0F00) >> 8] += opcode & 0x00FF;
             pc += 2;
             break;
 
         case 0x8000:
             switch(opcode & 0x000F){
                 case 0x0000:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    uint8_t y = (opcode & 0x00F0) >> 4;
-                    V[x] = V[y];
+                    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0X00F0) >> 4];
                     pc += 2;
                     break;
                 
                 case 0x0001:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    uint8_t y = (opcode & 0x00F0) >> 4;
-                    V[x] = V[x] | V[y];
+                    V[(opcode & 0x0F00) >> 8] |= V[(opcode & 0x00F0) >> 4];
                     pc += 2;
                     break;
                 
 
                case 0x0002:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    uint8_t y = (opcode & 0x00F0) >> 4;
-                    V[x] = V[x] & V[y];
+                    V[(opcode & 0x0F00) >> 8] &= V[(opcode & 0x00F0) >> 4];
                     pc += 2;
                     break;
                 
 
                case 0x0003:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    uint8_t y = (opcode & 0x00F0) >> 4;
-                    V[x] = V[x] ^ V[y];
+                    V[(opcode & 0x0F00) >> 8] ^= V[(opcode & 0x00F0) >> 4];
                     pc += 2;
                     break;
                 
 
                case 0x0004:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    uint8_t y = (opcode & 0x00F0) >> 4;
-                    uint16_t result = V[x] + V[y];
-                    if (result > 0xFF) {
+                    if (V[(opcode & 0x0F00) >> 8] + V[(opcode & 0x00F0) >> 4]> 0xFF) {
                         V[0xF] = 1; 
                     }
                     else {
                         V[0xF] = 0;
                     }
-                    V[x] = result & 0x00FF;
+                    V[(opcode & 0x0F00) >> 8] += V[(opcode & 0x00F0) >> 4];
                     pc += 2;
                     break;
                 
 
                case 0x0005:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    uint8_t y = (opcode & 0x00F0) >> 4;
-                    if (V[x] > V[y]) {
+                    if (V[(opcode & 0x0F00) >> 8] > V[(opcode & 0x00F0) >> 4]) {
                         V[0xF] = 1;
                     }
                     else {
                         V[0xF] = 0;
                     }
-                    V[x] = V[x] - V[y];
+                    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] - V[(opcode & 0x00F0) >> 4];
                     pc += 2;
                     break;
                 
 
                case 0x0006:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    if (V[x] & 0x1){
+                    if (V[(opcode & 0x0F00) >> 8] & 0x1){
                         V[0xF] = 1;
                     }
                     else {
                         V[0xF] = 0;
                     }
-                    V[x] = V[x] >> 1;
+                    V[(opcode & 0x0F00) >> 8] >>= 1;
                     pc += 2;
                     break;
                 
                 case 0x0007:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    uint8_t y = (opcode & 0x00F0) >> 4;
-                    if (V[y] > V[x]) {
+                    if (V[(opcode & 0x00F0) >> 4] > V[(opcode & 0x0F00) >> 8]) {
                         V[0xF] = 1;
                     }
                     else {
                         V[0xF] = 0;
                     }
-                    V[x] = V[y] - V[x];
+                    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4] - V[(opcode & 0x0F00) >> 8];
                     pc += 2;
                     break;
 
                 case 0x000E:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    if (V[x] & (1 << 7)) {
+                    if (V[(opcode & 0x0F00) >> 8] & (1 << 7)) {
                         V[0xF] = 1;
                     }
                     else {
                         V[0xF] = 0;
                     }
-                    V[x] = V[x] << 1;
+                    V[(opcode & 0x0F00) >> 8] <<= 1;
                     pc += 2;
                     break;
+           
+                default:
+                    break; 
             }
             break;
         
         case 0x9000:
-            uint8_t x = (opcode & 0x0F00) >> 8;
-            uint8_t y = (opcode & 0x00F0) >> 4;
-            if(V[x] != V[y]){
+            if(V[(opcode & 0x0F00) >> 8] != V[(opcode & 0x00F0) >> 4]){
                 pc += 2;
             }
             pc += 2;
@@ -275,17 +252,16 @@ void CHIP8::cycle(){
             break;
         
         case 0xC000:
-            uint8_t x = (opcode & 0x0F00) >> 8;
-            uint8_t val = opcode & 0x00FF;
-            V[x] = val & (rand() % (0xFF + 1));
+            V[(opcode & 0x0F00) >> 8] = (opcode & 0x00FF) >> 8 & (rand() % (0xFF + 1));
             pc += 2;
             break;
 
         // TODO: implement later
-        case 0xD000:
-            uint8_t x = (opcode & 0x0F00) >> 8;
-            uint8_t y = (opcode & 0x00F0) >> 4; 
-            uint8_t n = opcode & 0x000F; 
+        case 0xD000: {
+            
+            unsigned short x = (opcode & 0x0F00) >> 8;
+            unsigned short y = (opcode & 0x00F0) >> 4; 
+            unsigned short n = opcode & 0x000F; 
             unsigned short pixel;
             for (int i = 0; i < n; i++){
                 pixel = memory[I + i];
@@ -293,23 +269,25 @@ void CHIP8::cycle(){
             }
             pc += 2;
             break;
+        }
 
         case 0xE000:
             switch(opcode & 0x00FF){
                 case 0X009E:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    if (key[x] != 0){
+                    if (key[(opcode & 0x0F00) >> 8] != 0){
                         pc += 2;
                     }
                     pc += 2;
                     break;
                 
                 case 0X0A1:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    if (key[x] == 0){
+                    if (key[(opcode & 0x0F00) >> 8] == 0){
                         pc += 2;
                     }
                     pc += 2;
+                    break;
+
+                default:
                     break;
             }
             break;
@@ -317,17 +295,15 @@ void CHIP8::cycle(){
         case 0xF000:
             switch(opcode & 0x00FF){
                 case 0x0007:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    V[x] = delay;
+                    V[(opcode & 0x0F00) >> 8] = delay;
                     pc += 2;
                     break;
                 
-                case 0x000A:
+                case 0x000A: {
                     bool pressed = false;
                     for (int i = 0; i < 16; i++){
                         if(key[i] != 0){
-                            uint8_t x = (opcode & 0x0F00) >> 8;
-                            V[x] = i;
+                            V[(opcode & 0x0F00) >> 8] = i;
                             pressed = true;
                         }
                     }
@@ -336,57 +312,57 @@ void CHIP8::cycle(){
                     }
                     pc += 2;
                     break;
-
+                }
                 case 0x0015:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    delay = V[x];
+                    delay = V[(opcode & 0x0F00) >> 8];
                     pc += 2;
                     break;
 
                 case 0x0018:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    sound = V[x];
+                    sound = V[(opcode & 0x0F00) >> 8];
                     pc += 2;
                     break;
                 
                 case 0x001E:
-                    uint8_t x = (opcode & 0X0F00) >> 8;
-                    I = I + V[x];
+                    I = I + V[(opcode & 0x0F00) >> 8];
                     pc += 2;
                     break;
 
                 case 0x0029:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    I = memory[V[x] * 4];
+                    I = V[(opcode & 0x0F00) >> 8] * 0x5;
                     pc += 2;
                     break;
                 
                 case 0x0033:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    memory[I] = V[x] / 0x64;
-                    memory[I + 1] = (V[x] / 0xA)  % 0xA;
-                    memory[I + 2] = V[x] % 0xA;
+                    memory[I] = V[(opcode & 0x0F00) >> 8] / 0x64;
+                    memory[I + 1] = (V[(opcode & 0x0F00) >> 8] / 0xA)  % 0xA;
+                    memory[I + 2] = V[(opcode & 0x0F00) >> 8] % 0xA;
                     pc += 2;
                     break;
 
                 case 0x0055:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    for (int i = 0; i < x; i++){
+                    for (int i = 0; i <= (opcode & 0x0F00) >> 8; i++){
                         memory[I + i] = V[i];
                     }
                     pc += 2;
                     break;
                 
                 case 0x0065:
-                    uint8_t x = (opcode & 0x0F00) >> 8;
-                    for (int i = 0; i < x; i++){
+                    for (int i = 0; i <= (opcode & 0x0F00) >> 8; i++){
                         V[i] = memory[I + i]; 
                     }
                     pc += 2;
                     break;
+
+                default:
+                    break;
             }
             break;
+
+        default:
+            break;
     }
+
     if (delay > 0){
         delay--;
     }
