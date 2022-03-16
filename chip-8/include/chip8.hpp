@@ -23,6 +23,7 @@ class CHIP8 {
 
         uint16_t pc;
         uint16_t I;
+        uint16_t opcode;
 
         uint8_t delay;
         uint8_t sound;
