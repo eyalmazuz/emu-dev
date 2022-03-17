@@ -6,6 +6,7 @@ INC= -I./include -I/usr/local/include
 .PHONY: clean all
 
 all: main.o chip8.o
+	@mkdir -p bin
 	$(CC) objects/main.o objects/chip8.o $(CFLAGS) $(LDFLAGS) $(INC) -o bin/chip8.out
 
 main.o: src/main.cpp
