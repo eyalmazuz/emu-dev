@@ -55,8 +55,6 @@ int main(int argc, char **argv){
         exit(1);
     }
 
-    // SDL_Texture *sdlTextture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, 64, 32);
-    // uint32_t pixels[2048];
     while(true){
         chip8->cycle();
 
