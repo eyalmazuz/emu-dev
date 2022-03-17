@@ -54,7 +54,9 @@ int main(int argc, char **argv){
         std::cout << "Failed to create renderer " << SDL_GetError() << std::endl;
         exit(1);
     }
-        
+
+    SDL_Texture *sdlTextture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, 64, 32);
+    uint32_t pixels[2048];
     while(true){
         chip8->cycle();
 
@@ -85,17 +87,20 @@ int main(int argc, char **argv){
         }
         if(chip8->draw) {
             chip8->draw = false;
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-            SDL_RenderClear(renderer);
-            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
             //TODO: process graphics
-
+            for (int i = 0; i < 2048; i++){
+                uint8_t pixel = chip8->display[i];
+                pixels[i] = (0x00FFFFFF * pixel) | 0xFF000000;
+            }
+            SDL_UpdateTexture(sdlTextture, NULL, pixels, 64 * sizeof(Uint32));
+            SDL_RenderClear(renderer);
+            SDL_RenderCopy(renderer, sdlTextture, NULL, NULL);
             SDL_RenderPresent(renderer);
             
         }
         // Delay the game
-        SDL_Delay(10);
+        SDL_Delay(5);
     }
 
     return 0;
