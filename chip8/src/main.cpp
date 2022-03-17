@@ -55,8 +55,8 @@ int main(int argc, char **argv){
         exit(1);
     }
 
-    SDL_Texture *sdlTextture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, 64, 32);
-    uint32_t pixels[2048];
+    // SDL_Texture *sdlTextture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, 64, 32);
+    // uint32_t pixels[2048];
     while(true){
         chip8->cycle();
 
@@ -85,18 +85,32 @@ int main(int argc, char **argv){
                 } 
             }
         }
+        SDL_RenderSetScale(renderer, 16, 16);
         if(chip8->draw) {
             chip8->draw = false;
 
             //TODO: process graphics
-            for (int i = 0; i < 2048; i++){
-                uint8_t pixel = chip8->display[i];
-                pixels[i] = (0x00FFFFFF * pixel) | 0xFF000000;
-            }
-            SDL_UpdateTexture(sdlTextture, NULL, pixels, 64 * sizeof(Uint32));
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             SDL_RenderClear(renderer);
-            SDL_RenderCopy(renderer, sdlTextture, NULL, NULL);
-            SDL_RenderPresent(renderer);
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+            for(int i = 0; i < 32; i++){
+                for(int j = 0; j < 64; j++){
+                    if(chip8->display[j + i * 64] == 1){
+                        
+                        SDL_RenderDrawPoint(renderer, j, i);
+                    }
+                }
+            }
+            SDL_RenderPresent(renderer); 
+            // for (int i = 0; i < 2048; i++){
+            //     uint8_t pixel = chip8->display[i];
+            //     pixels[i] = (0x00FFFFFF * pixel) | 0xFF000000;
+            // }
+            // SDL_UpdateTexture(sdlTextture, NULL, pixels, 64 * sizeof(Uint32));
+            // SDL_RenderClear(renderer);
+            // SDL_RenderCopy(renderer, sdlTextture, NULL, NULL);
+            // SDL_RenderPresent(renderer);
             
         }
         // Delay the game
