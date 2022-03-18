@@ -1,37 +1,18 @@
-#include "../include/chip8.hpp"
+#include "../include/emulator.hpp"
 #include <iostream>
-#include <SDL2/SDL.h>
-
-uint8_t keymap[16] = {
-    SDLK_x,
-    SDLK_1,
-    SDLK_2,
-    SDLK_3,
-    SDLK_q,
-    SDLK_w,
-    SDLK_e,
-    SDLK_a,
-    SDLK_s,
-    SDLK_d,
-    SDLK_z,
-    SDLK_c,
-    SDLK_4,
-    SDLK_r,
-    SDLK_f,
-    SDLK_v,
-};
 
 int main(int argc, char **argv){
     
     if (argc != 2){
         std::cout << "Please run the emulator as ./emu <rom path>" << std::endl;;
+        return 1;
     }
     char *path = argv[1];
     std::cout << path << std::endl;
 
-    CHIP8 *chip8 = new CHIP8();
-    int result = chip8->load_rom(path);
-    if (result == 0){
+    Emulator *chip8 = new Emulator(16, 4096, 16, 32, 64);
+
+    if (!chip8->loadRom(path)){
         return 1;
     }
 
@@ -67,36 +48,29 @@ int main(int argc, char **argv){
 
             if(event.type == SDL_KEYDOWN){
                 if(event.key.keysym.sym == SDLK_ESCAPE){
+                    SDL_Quit();
                     exit(0);
                 }
-                for (int i = 0; i < 16; i++){
-                    if(event.key.keysym.sym == keymap[i]) {
-                        chip8->key[i] = 1;
-                    }
-                }
+                chip8->keyPressed(event.key.keysym.sym);
             }
             if(event.type == SDL_KEYUP) {
-               for (int i = 0; i < 16; i++){
-                    if(event.key.keysym.sym == keymap[i]) {
-                        chip8->key[i] = 0;
-                    }
-                } 
+               chip8->keyPressed(event.key.keysym.sym);
             }
         }
         SDL_RenderSetScale(renderer, 16, 16);
-        if(chip8->draw) {
-            chip8->draw = false;
+        if(chip8->canDraw()) {
+            chip8->setDraw(false);
 
             //TODO: process graphics
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             SDL_RenderClear(renderer);
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-            for(int i = 0; i < 32; i++){
-                for(int j = 0; j < 64; j++){
-                    if(chip8->display[j + i * 64] == 1){
+            for(int x = 0; x < 64; x++){
+                for(int y = 0; y < 32; y++){
+                    if(chip8->isDrawn(x, y)){
                         
-                        SDL_RenderDrawPoint(renderer, j, i);
+                        SDL_RenderDrawPoint(renderer, x, y);
                     }
                 }
             }
@@ -104,7 +78,7 @@ int main(int argc, char **argv){
             
         }
         // Delay the game
-        SDL_Delay(5);
+        SDL_Delay(10);
     }
 
     return 0;
