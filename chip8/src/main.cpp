@@ -54,7 +54,7 @@ int main(int argc, char **argv){
                 chip8->keyPressed(event.key.keysym.sym);
             }
             if(event.type == SDL_KEYUP) {
-               chip8->keyPressed(event.key.keysym.sym);
+               chip8->keyReleased(event.key.keysym.sym);
             }
         }
         SDL_RenderSetScale(renderer, 16, 16);

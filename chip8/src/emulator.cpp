@@ -392,7 +392,7 @@ void Emulator::keyPressed(SDL_Keycode key) {
 }
 
 void Emulator::keyReleased(SDL_Keycode key) {
-    keyboard->keyPress(key);
+    keyboard->keyRelease(key);
 }
 
 bool Emulator::canDraw() {
