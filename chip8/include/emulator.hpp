@@ -1,7 +1,6 @@
 #ifndef _EMULATOR_H_
 #define _EMULATOR_H_
 
-#include <stddef.h>
 #include "display.hpp"
 #include "stack.hpp"
 #include "memory.hpp"

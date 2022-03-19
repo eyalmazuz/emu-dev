@@ -9,6 +9,8 @@
 #define Vy(opcode) (((opcode) & 0x00F0) >> 4)
 #define Value(opcode) ((opcode) & 0x00FF)
 #define getRand(opcode) (((opcode) & 0x00FF) & (rand() % (0xFF + 1)))
+#define CARRY 0xF
+#define FONT_SIZE 0x5
 
 Emulator::Emulator(size_t registerCount, size_t memorySize, size_t stackSize, size_t displayHeight, size_t displayWidth) {
     cpu = new Cpu(registerCount);
@@ -189,10 +191,10 @@ void Emulator::cycle() {
                case 0x0004:
                     cpu->writeRegister(Vx(opcode), cpu->getRegister(Vx(opcode)) + cpu->getRegister(Vy(opcode)));
                     if (cpu->getRegister(Vy(opcode)) > (0xFF - cpu->getRegister(Vx(opcode)))) {
-                        cpu->writeRegister(0xF, 1); 
+                        cpu->writeRegister(CARRY, 1); 
                     }
                     else {
-                        cpu->writeRegister(0xF, 0);
+                        cpu->writeRegister(CARRY, 0);
                     }
                     pc += 2;
                     break;
@@ -200,10 +202,10 @@ void Emulator::cycle() {
 
                case 0x0005:
                     if (cpu->getRegister(Vx(opcode)) > cpu->getRegister(Vy(opcode))) {
-                        cpu->writeRegister(0xF, 1);
+                        cpu->writeRegister(CARRY, 1);
                     }
                     else {
-                        cpu->writeRegister(0xF, 0);
+                        cpu->writeRegister(CARRY, 0);
                     }
                     cpu->writeRegister(Vx(opcode), cpu->getRegister(Vx(opcode)) - cpu->getRegister(Vy(opcode)));
                     pc += 2;
@@ -211,24 +213,24 @@ void Emulator::cycle() {
                 
 
                case 0x0006:
-                    cpu->writeRegister(0xF, cpu->getRegister(Vx(opcode)) & 0x1);
+                    cpu->writeRegister(CARRY, cpu->getRegister(Vx(opcode)) & 0x1);
                     cpu->writeRegister(Vx(opcode), cpu->getRegister(Vx(opcode)) >> 1);
                     pc += 2;
                     break;
                 
                 case 0x0007:
                     if (cpu->getRegister(Vy(opcode)) > cpu->getRegister(Vx(opcode))) {
-                        cpu->writeRegister(0xF, 1);
+                        cpu->writeRegister(CARRY, 1);
                     }
                     else {
-                        cpu->writeRegister(0xF, 0);
+                        cpu->writeRegister(CARRY, 0);
                     }
                     cpu->writeRegister(Vx(opcode), cpu->getRegister(Vy(opcode)) - cpu->getRegister(Vx(opcode)));
                     pc += 2;
                     break;
 
                 case 0x000E:
-                    cpu->writeRegister(0xF, cpu->getRegister(Vx(opcode)) >> 7);
+                    cpu->writeRegister(CARRY, cpu->getRegister(Vx(opcode)) >> 7);
                     cpu->writeRegister(Vx(opcode), cpu->getRegister(Vx(opcode)) << 1);
                     pc += 2;
                     break;
@@ -267,14 +269,14 @@ void Emulator::cycle() {
             unsigned short n = opcode & 0x000F; 
             unsigned short pixel;
             
-            cpu->writeRegister(0xF, 0);
+            cpu->writeRegister(CARRY, 0);
             for (int i = 0; i < n; i++){
                 pixel = memory->read(cpu->getI() + i);
                 
                 for (int j = 0; j < 8; j++){
                     if((pixel & (0x80 >> j)) != 0){
                         if(display->isDrawn(x + j, y + i)) {
-                            cpu->writeRegister(0xF, 1);
+                            cpu->writeRegister(CARRY, 1);
                         }
                         display->draw(x + j, y + i);
                     }
@@ -333,10 +335,10 @@ void Emulator::cycle() {
                 
                 case 0x001E:
                     if(cpu->getI() + cpu->getRegister(Vx(opcode)) > 0xFFF) {
-                        cpu->writeRegister(0xF, 1);
+                        cpu->writeRegister(CARRY, 1);
                     }
                     else {
-                        cpu->writeRegister(0xF, 0);
+                        cpu->writeRegister(CARRY, 0);
                     }
                     cpu->setI(cpu->getI() + cpu->getRegister(Vx(opcode)));
                     pc += 2;
