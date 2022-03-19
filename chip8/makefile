@@ -1,7 +1,7 @@
 CC= g++
 CFLAGS= -Wall -g
-LDFLAGS= -L/usr/local/lib -lSDL2
-INC= -I./include -I/usr/local/include
+LDFLAGS= -lSDL2
+INC= -I./include
 OBJECTS = objects/*.o
 
 .PHONY: clean all
