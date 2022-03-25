@@ -1,8 +1,9 @@
 #include "../include/shiftRegister.hpp"
 
-#define MERGE(a ,b) (((uint16_t)a) << 8 | ((uint16_t) b))
+#define MERGE(data ,value) (data >> 8 | ((uint16_t) value << 8))
 #define SHIFT_LEFT(a, size) ((a >> size))
 #define SHIFT_RIGHT(a, size) ((a << size))
+#define GET_OFFSET(offest) (offest & 0x7)
 
 ShiftRegister::ShiftRegister() { }
 
@@ -17,6 +18,7 @@ uint16_t ShiftRegister::read() {
 }
 
 void ShiftRegister::offset(uint8_t offset) {
+    offset = GET_OFFSET(offset);
     data = SHIFT_RIGHT(data, offset);
     data = SHIFT_LEFT(data, 8);
 }

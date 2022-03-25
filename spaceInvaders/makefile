@@ -6,9 +6,9 @@ OBJECTS = objects/*.o
 
 .PHONY: clean all
 
-all: main.o emulator.o cpu.o display.o memory.o stack.o keyboard.o
+all: main.o emulator.o video.o memory.o shiftRegister.o
 	@mkdir -p bin
-	$(CC) $(OBJECTS) $(CFLAGS) $(LDFLAGS) $(INC) -o bin/chip8.out
+	$(CC) $(OBJECTS) $(CFLAGS) $(LDFLAGS) $(INC) -o bin/invaders.out
 
 main.o: src/main.cpp
 	@mkdir -p objects	
@@ -18,26 +18,26 @@ emulator.o: src/emulator.cpp
 	@mkdir -p objects	
 	$(CC) $(CFLAGS) $(INC) -c src/emulator.cpp -o objects/emulator.o
 
-cpu.o: src/cpu.cpp
-	@mkdir -p objects	
-	$(CC) $(CFLAGS) $(INC) -c src/cpu.cpp -o objects/cpu.o
+# cpu.o: src/cpu.cpp
+# 	@mkdir -p objects	
+# 	$(CC) $(CFLAGS) $(INC) -c src/cpu.cpp -o objects/cpu.o
 
-display.o: src/display.cpp
+video.o: src/video.cpp
 	@mkdir -p objects	
-	$(CC) $(CFLAGS) $(INC) -c src/display.cpp -o objects/display.o
+	$(CC) $(CFLAGS) $(INC) -c src/video.cpp -o objects/video.o
 
 memory.o: src/memory.cpp
 	@mkdir -p objects	
 	$(CC) $(CFLAGS) $(INC) -c src/memory.cpp -o objects/memory.o
 
-stack.o: src/stack.cpp
+shiftRegister.o: src/shiftRegister.cpp
 	@mkdir -p objects	
-	$(CC) $(CFLAGS) $(INC) -c src/stack.cpp -o objects/stack.o
+	$(CC) $(CFLAGS) $(INC) -c src/shiftRegister.cpp -o objects/shiftRegister.o
 
-keyboard.o: src/keyboard.cpp
-	@mkdir -p objects	
-	$(CC) $(CFLAGS) $(INC) -c src/keyboard.cpp -o objects/keyboard.o
+# keyboard.o: src/keyboard.cpp
+# 	@mkdir -p objects	
+# 	$(CC) $(CFLAGS) $(INC) -c src/keyboard.cpp -o objects/keyboard.o
 
 clean:
-	$(RM) bin/chip8.out
+	$(RM) bin/invaders.out
 	$(RM) -r objects

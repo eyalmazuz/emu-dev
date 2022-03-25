@@ -13,10 +13,9 @@ class Video {
         void clear();
 
     private:
-        uint8_t **screen;
         size_t height;
         size_t width;
-
+        uint8_t **screen;
 };
 
 #endif

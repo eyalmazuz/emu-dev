@@ -12,6 +12,7 @@ class Memory {
 
         uint8_t read();
         void write(size_t addr, uint8_t value);
+        uint8_t read(size_t addr);
 
     private:
         uint8_t *memory;
