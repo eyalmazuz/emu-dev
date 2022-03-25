@@ -1,4 +1,4 @@
-#include <../include/cpu.hpp>
+#include "../include/cpu.hpp"
 
 Cpu::Cpu(size_t registerCount):registerCount(registerCount), I(0), delay(0), sound(0) {
     V = new uint8_t[registerCount];

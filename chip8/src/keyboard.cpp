@@ -1,4 +1,4 @@
-#include <../include/keyboard.hpp>
+#include "../include/keyboard.hpp"
 
 Keyboard::Keyboard():pressed(false) {
     SDL_Keycode keyCodes[16] = {

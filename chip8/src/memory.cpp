@@ -1,4 +1,4 @@
-#include <../include/memory.hpp>
+#include "../include/memory.hpp"
 
 Memory::Memory(size_t size):size(size) {
 
